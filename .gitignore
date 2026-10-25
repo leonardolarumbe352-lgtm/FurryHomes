@@ -1,0 +1,8 @@
+/storage/*.sqlite
+/storage/*.sqlite-*
+/storage/database.php
+/storage/database.local.php
+/public/uploads/
+/.env
+/.env.*
+*.log
