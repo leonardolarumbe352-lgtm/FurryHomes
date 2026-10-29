@@ -2,6 +2,7 @@
 /storage/*.sqlite-*
 /storage/database.php
 /storage/database.local.php
+/storage/*backup*.sql
 /public/uploads/
 /.env
 /.env.*

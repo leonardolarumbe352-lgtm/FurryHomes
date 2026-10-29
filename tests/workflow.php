@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-$db=new PDO('sqlite::memory:');$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);$db->exec('PRAGMA foreign_keys=ON');$db->exec(file_get_contents(__DIR__.'/../app/schema.sql'));
+$db=new PDO('sqlite::memory:');$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);$db->exec('PRAGMA foreign_keys=ON');$db->exec(file_get_contents(__DIR__.'/../app/database/schema.sqlite.sql'));
 function check(bool $value,string $message): void {if(!$value)throw new RuntimeException($message);echo "PASS: $message\n";}
 $db->exec("INSERT INTO users(id,name,email,password,role) VALUES(1,'Team','team@test.local','hash','Admin'),(2,'Adopter','adopter@test.local','hash','Adopter'); INSERT INTO pets(id,name,species,breed,age,gender,intake_date) VALUES(1,'Milo','Dog','Mixed','2 years','Male','2026-10-01')");
 $db->beginTransaction();$db->exec("INSERT INTO applications(id,pet_id,user_id,housing,experience,reason) VALUES(1,1,2,'House','Experienced','Companion'); INSERT INTO notifications(user_id,message) VALUES(2,'Submitted')");$db->commit();

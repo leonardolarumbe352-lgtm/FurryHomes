@@ -12,7 +12,11 @@ For PHP's development server, use the protected router:
 C:\xampp\php\php.exe -S localhost:8080 router.php
 ```
 
-The local `furryhomes` database contains 11 InnoDB tables and is visible in phpMyAdmin. The app uses a password-protected `furryhomes_app` account with SELECT, INSERT, UPDATE and DELETE privileges limited to this database. Its generated credentials are in `storage/database.php`, excluded from Git and protected by Apache access rules. For another installation, import `app/schema.mysql.sql`, create a restricted database account, and configure `storage/database.php` with its PDO DSN, user, and password. Apache must honor the included `.htaccess` files; the development router also blocks private paths. Back up MariaDB and uploaded photos together. The SQLite schema remains for isolated tests.
+Hosted connections use `storage/database.php`; localhost and CLI runs automatically use `storage/database.local.php`. Both are excluded from Git and protected by Apache access rules. Local XAMPP uses `127.0.0.1:3307` and database `furryhomes`. See [hosting instructions](docs/INFINITYFREE.md). For another installation, copy `storage/database.example.php` to the appropriate configuration file, fill in its DSN, username and password, and import `app/database/schema.mysql.sql` or the InfinityFree schema. Apache must honor the included `.htaccess` files; the development router also blocks private paths. Back up MariaDB and uploaded photos together. The SQLite schema remains for isolated tests.
+
+## Project structure
+
+Feature code lives in `app/modules/`, with separate action handlers, read repositories, and views. Page and action permissions live in `app/config/`; common helpers live in `app/shared/`. The entry point only coordinates routing and rendering. See [the architecture guide](docs/ARCHITECTURE.md) for the full folder map and instructions for adding modules.
 
 ## Modules
 
@@ -29,10 +33,10 @@ The local `furryhomes` database contains 11 InnoDB tables and is visible in phpM
 
 ## Transactions
 
-`app/actions.php` explicitly identifies four database transactions: application submission, application review, adoption finalization, and foster assignment. Finalization atomically creates the contract, updates the pet, closes competing applications, ends foster placement, and notifies adopters. All transactions roll back on failure. Additional transactions protect registration and foster returns.
+Module action handlers preserve four primary database transactions: application submission, application review, adoption finalization, and foster assignment. Finalization atomically creates the contract, updates the pet, closes competing applications, ends foster placement, and notifies adopters. All transactions roll back on failure through `app/shared/database.php`. Additional transactions protect registration and foster returns.
 
 ## Validation
 
-Run `C:\xampp\php\php.exe tests/workflow.php` for an isolated database workflow test. It does not modify the app database. PHP lint can be run against each PHP source file.
+Run `C:\xampp\php\php.exe tests/workflow.php` and `C:\xampp\php\php.exe tests/modules.php`. Both use isolated in-memory databases and do not modify the app database. Module integration checks exercise production handlers, permissions, CSRF protection, transaction failure paths, and page rendering for each role. PHP lint can be run against each PHP source file.
 
 Before public deployment, configure HTTPS and Apache access controls, use a production PHP configuration with display_errors disabled, arrange backups, and add operational account recovery/email delivery as needed. This version uses in-app notifications.
